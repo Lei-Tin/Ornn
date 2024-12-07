@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/settings.css') }}">
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/ornn.ico') }}">
+
+    <title>Settings for Ornn</title>
+
+    <script>
+        // Send updated setting to the backend
+        async function updateSetting(setting, value) {
+            const response = await fetch('/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ setting, value })
+            });
+            const result = await response.json();
+            console.log(result.message);
+        }
+
+        // Handle checkbox toggle
+        function toggleFeature(feature) {
+            const checkbox = document.getElementById(feature);
+            updateSetting(feature, checkbox.checked);
+        }
+    </script>
+</head>
+<body>
+    <!-- Centered Glass Pane -->
+    <div class="glass-pane">
+         <!-- Display the Image -->
+        <img src="{{ url_for('static', filename='images/ornn.jpg') }}" alt="Ornn Image" class="settings-image">
+
+        <h1>Settings for Ornn</h1>
+
+        <div class="toggle-container">
+            <label for="auto_accept_enabled">Enable Auto Accept</label>
+            <label class="switch">
+                <input type="checkbox" id="auto_accept_enabled" onclick="toggleFeature('auto_accept_enabled')" {{'checked' if settings.auto_accept_enabled else ""}}>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+</body>
+
+<!-- Footer -->
+<div class="footer">
+    <p>
+        Ornn is created by <a href="https://github.com/Lei-Tin" target="_blank">Lei-Tin</a> | Version 1.0
+    </p>
+</div>
+
+</html>

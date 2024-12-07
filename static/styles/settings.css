@@ -1,0 +1,132 @@
+/* Background gradient */
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #fff5f5, #fffaf2, #fefcf9);
+    background-size: 300% 300%;
+    animation: gradientShift 15s ease infinite;
+}
+
+/* Animation for background gradient */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Centered glass-like pane */
+.glass-pane {
+    background: rgba(255, 255, 255, 0.4); /* Light transparency */
+    backdrop-filter: blur(15px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-radius: 20px;
+    width: 600px; /* Increased width */
+    padding: 50px; /* Increased padding */
+    text-align: center;
+}
+
+/* Title styling */
+h1 {
+    color: #444; /* Darker text for better contrast */
+    font-size: 28px; /* Slightly larger font */
+    margin-bottom: 30px;
+}
+
+/* Image Styling */
+.settings-image {
+    width: 120px; /* Adjust the size as needed */
+    height: auto;
+    border-radius: 15px; /* Rounded corners */
+    margin-bottom: 20px; /* Add some space below the image */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional shadow for a pop effect */
+}
+
+/* Checkbox container */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 15px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.2); /* Light background for toggle section */
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+}
+
+.toggle-container label {
+    color: #555; /* Slightly darker gray */
+    font-size: 20px;
+}
+
+/* Toggle switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px; /* Larger width for better usability */
+    height: 25px; /* Larger height for better usability */
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    /* Make background light red when off */
+    background-color: #ffb3b3;
+    transition: .4s;
+    border-radius: 25px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 19px;
+    width: 19px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white; /* Keeps the knob white */
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    /* Make background green when on */
+    background-color: #4CAF50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(25px); /* Adjust for larger switch */
+    background-color: #fff; /* Keeps the knob white */
+}
+
+
+/* Footer styling */
+.footer {
+    color: rgba(0, 0, 0, 0.6); /* Slightly transparent text */
+    font-size: 14px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+}
+
+.footer a {
+    color: rgba(0, 0, 0, 0.8); /* Slightly darker for links */
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}

@@ -1,1 +1,6 @@
 lcu_driver
+pystray
+pillow
+flask
+flask_cors
+psutil

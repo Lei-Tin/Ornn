@@ -1,0 +1,11 @@
+# Ignore Mac OS DS Store
+.DS_Store
+
+# Ignore the build directory and build related files
+Ornn.spec
+dist
+build
+
+# Ignore IDE files and cache
+__pycache__
+.idea
