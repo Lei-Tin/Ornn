@@ -2,7 +2,6 @@ from pystray import Icon, Menu, MenuItem
 from PIL import Image
 
 import webbrowser
-import os
 import logging
 
 from config import *

@@ -2,7 +2,6 @@ import sys
 
 import logging
 import psutil
-import time
 
 from config import *
 
