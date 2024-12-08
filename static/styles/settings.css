@@ -36,6 +36,13 @@ h1 {
     margin-bottom: 30px;
 }
 
+/* Title styling */
+h2 {
+    color: #444; /* Darker text for better contrast */
+    font-size: 20px; /* Slightly larger font */
+    margin-bottom: 30px;
+}
+
 /* Image Styling */
 .settings-image {
     width: 120px; /* Adjust the size as needed */
@@ -130,3 +137,38 @@ input:checked + .slider:before {
 .footer a:hover {
     text-decoration: underline;
 }
+
+.name-list {
+    list-style: none;
+    padding: 0;
+}
+.name-list li {
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 5px 0;
+    cursor: grab;
+    background: #f9f9f9;
+}
+.name-list li:active {
+    cursor: grabbing;
+    background: #e9e9e9;
+}
+
+
+/* Expandable section animation */
+.expandable-section {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    opacity: 0;
+    padding: 0; /* Remove padding when collapsed */
+    margin: 0; /* Remove margin when collapsed */
+}
+
+.expandable-section.expanded {
+    max-height: 500px; /* Set a large enough max-height */
+    opacity: 1;
+    padding: 10px 0; /* Add padding only when expanded */
+    margin: 10px 0; /* Add margin only when expanded */
+}
+
