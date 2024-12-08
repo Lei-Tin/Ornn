@@ -155,20 +155,51 @@ input:checked + .slider:before {
 }
 
 
-/* Expandable section animation */
-.expandable-section {
-    max-height: 0;
+/* Toggle container as a card */
+.toggle-card {
+    background: rgba(255, 255, 255, 0.6); /* Light background */
+    border-radius: 15px; /* Rounded corners */
+    padding: 20px; /* Space inside the card */
+    margin: 15px 0; /* Space between cards */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, margin 0.5s ease-in-out;
     overflow: hidden;
-    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
-    opacity: 0;
-    padding: 0; /* Remove padding when collapsed */
-    margin: 0; /* Remove margin when collapsed */
 }
 
-.expandable-section.expanded {
-    max-height: 500px; /* Set a large enough max-height */
+h2.collapsed {
+    margin-bottom: 0;
+}
+
+/* Default collapsed state */
+.toggle-card.collapsed {
+    max-height: 60px; /* Height for just the toggle */
+    opacity: 0.9;
+}
+
+/* Expanded state */
+.toggle-card.expanded {
+    max-height: 500px; /* Large enough to accommodate content */
     opacity: 1;
-    padding: 10px 0; /* Add padding only when expanded */
-    margin: 10px 0; /* Add margin only when expanded */
 }
 
+/* Label styling */
+.toggle-card label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #444;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Champion list section */
+.toggle-card .list-section {
+    margin-top: 20px;
+    opacity: 1;
+}
+
+/* Hide content visually during collapse animation */
+.toggle-card.collapsed .list-section {
+    opacity: 0; /* Make content invisible */
+    pointer-events: none; /* Prevent interactions while collapsed */
+}

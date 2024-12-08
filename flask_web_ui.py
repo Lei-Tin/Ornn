@@ -31,7 +31,10 @@ auto_ban_list_champions = []
 @app.route('/')
 def serve_settings():
     # Serve the settings page HTML
-    return render_template('settings.html', settings=settings)
+    return render_template('settings.html',
+                           settings=settings,
+                           auto_ban_list_champions=auto_ban_list_champions,
+                           auto_lock_in_champions=auto_lock_in_champions)
 
 @app.route('/update', methods=['POST'])
 def update_settings():
