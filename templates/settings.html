@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/settings.css') }}">
-
-    <link rel="shortcut icon" href="{{ url_for('static', filename='images/ornn.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/settings.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='styles/images/ornn.ico') }}">
 
     <title>Settings for Ornn</title>
-
     <script>
         // Send updated setting to the backend
         async function updateSetting(setting, value) {
@@ -16,39 +14,126 @@
                 body: JSON.stringify({ setting, value })
             });
             const result = await response.json();
+
+            // Debug purposes
             console.log(result.message);
         }
 
         // Handle checkbox toggle
         function toggleFeature(feature) {
             const checkbox = document.getElementById(feature);
-            updateSetting(feature, checkbox.checked);
+            const isChecked = checkbox.checked;
+
+            updateSetting(feature, isChecked);
+
+            // Handle expansion for auto ban or auto lock-in lists
+            if (feature === 'auto_ban_enabled' || feature === 'auto_lock_in_enabled') {
+                const section = document.getElementById(`${feature}_section`);
+                if (isChecked) {
+                    section.classList.add("expanded");
+                    section.style.display = "block"; // Make section visible
+                } else {
+                    section.classList.remove("expanded");
+                    setTimeout(() => {
+                        section.style.display = "none"; // Fully hide after animation ends
+                    }, 500); // Matches the CSS transition duration
+                }
+            }
+        }
+
+
+
+        // Handle adding champions to a list
+        function addChampion(listId, inputId) {
+            const inputBox = document.getElementById(inputId);
+            const championName = inputBox.value.trim();
+            if (championName) {
+                const list = document.getElementById(listId);
+                const listItem = document.createElement("li");
+                listItem.textContent = championName;
+
+                // Add delete button to remove champion from list
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Remove";
+                deleteButton.onclick = function () {
+                    list.removeChild(listItem);
+                    updateChampionList(listId);
+                };
+
+                listItem.appendChild(deleteButton);
+                list.appendChild(listItem);
+                inputBox.value = "";
+
+                // Update the backend with the new list
+                updateChampionList(listId);
+            }
+        }
+
+        // Update champion list on the backend
+        async function updateChampionList(listId) {
+            const list = document.getElementById(listId);
+            const champions = Array.from(list.children).map(item => item.firstChild.textContent);
+            const setting = listId === "ban_list" ? "auto_ban_list_champions" : "auto_lock_in_champions";
+
+            await updateSetting(setting, champions);
         }
     </script>
 </head>
 <body>
     <!-- Centered Glass Pane -->
     <div class="glass-pane">
-         <!-- Display the Image -->
-        <img src="{{ url_for('static', filename='images/ornn.jpg') }}" alt="Ornn Image" class="settings-image">
-
         <h1>Settings for Ornn</h1>
 
+        <!-- Auto Accept Toggle -->
         <div class="toggle-container">
             <label for="auto_accept_enabled">Enable Auto Accept</label>
             <label class="switch">
-                <input type="checkbox" id="auto_accept_enabled" onclick="toggleFeature('auto_accept_enabled')" {{'checked' if settings.auto_accept_enabled else ""}}>
+                <input type="checkbox" id="auto_accept_enabled" onclick="toggleFeature('auto_accept_enabled')" {{ 'checked' if settings['auto_accept_enabled'] else '' }}>
                 <span class="slider"></span>
             </label>
         </div>
+
+        <!-- Auto Lock-In Toggle -->
+        <div class="toggle-container">
+            <label for="auto_lock_in_enabled">Enable Auto Lock-In</label>
+            <label class="switch">
+                <input type="checkbox" id="auto_lock_in_enabled" onclick="toggleFeature('auto_lock_in_enabled')" {{ 'checked' if settings['auto_lock_in_enabled'] else '' }}>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <!-- Auto Lock-In Champions Section -->
+        <div id="auto_lock_in_enabled_section" class="expandable-section {{ 'expanded' if settings['auto_lock_in_enabled'] else '' }}">
+            <h2>Auto Lock-In Champions</h2>
+            <input type="text" id="lock_in_search" placeholder="Add a champion..." />
+            <button onclick="addChampion('lock_in_list', 'lock_in_search')">Add</button>
+            <ul id="lock_in_list">
+                {% for champion in auto_lock_in_champions %}
+                <li>{{ champion }} <button onclick="this.parentNode.remove(); updateChampionList('lock_in_list')">Remove</button></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Auto Ban Toggle -->
+        <div class="toggle-container">
+            <label for="auto_ban_enabled">Enable Auto Ban</label>
+            <label class="switch">
+                <input type="checkbox" id="auto_ban_enabled" onclick="toggleFeature('auto_ban_enabled')" {{ 'checked' if settings['auto_ban_enabled'] else '' }}>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <!-- Auto Ban Champions Section -->
+        <div id="auto_ban_enabled_section" class="expandable-section {{ 'expanded' if settings['auto_ban_enabled'] else '' }}">
+            <h2>Auto Ban Champions</h2>
+            <input type="text" id="ban_search" placeholder="Add a champion..." />
+            <button onclick="addChampion('ban_list', 'ban_search')">Add</button>
+            <ul id="ban_list">
+                {% for champion in auto_ban_list_champions %}
+                <li>{{ champion }} <button onclick="this.parentNode.remove(); updateChampionList('ban_list')">Remove</button></li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </body>
-
-<!-- Footer -->
-<div class="footer">
-    <p>
-        Ornn is created by <a href="https://github.com/Lei-Tin" target="_blank">Lei-Tin</a> | Version 1.0
-    </p>
-</div>
-
 </html>
