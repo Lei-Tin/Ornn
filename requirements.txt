@@ -4,3 +4,4 @@ pillow
 flask
 flask_cors
 psutil
+nest_asyncio
