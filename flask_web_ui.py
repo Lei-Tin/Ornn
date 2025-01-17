@@ -21,7 +21,7 @@ settings = {
 }
 
 @app.route('/')
-def settings():
+def serve_settings():
     # Serve the settings page HTML
     return render_template('settings.html', settings=settings)
 
