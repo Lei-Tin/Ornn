@@ -6,6 +6,9 @@ Ornn.spec
 dist
 build
 
+# Ignore test files
+test.py
+
 # Ignore IDE files and cache
 __pycache__
 .idea
