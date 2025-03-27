@@ -1,14 +1,19 @@
 /* Background gradient */
 body {
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
     font-family: Arial, sans-serif;
     background: linear-gradient(135deg, #fff5f5, #fffaf2, #fefcf9);
     background-size: 300% 300%;
     animation: gradientShift 15s ease infinite;
+}
+
+.page-wrapper {
+    flex: 1; 
+    display: flex;
+    justify-content: center;
 }
 
 /* Animation for background gradient */
@@ -20,14 +25,18 @@ body {
 
 /* Centered glass-like pane */
 .glass-pane {
-    background: rgba(255, 255, 255, 0.4); /* Light transparency */
+    position: relative;
+    background: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(15px);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
-    width: 600px; /* Increased width */
-    padding: 50px; /* Increased padding */
+    width: 600px;
+    padding: 50px;
     text-align: center;
+    height: auto;
+    margin: 80px auto;
 }
+
 
 /* Title styling */
 h1 {
@@ -69,12 +78,26 @@ h2 {
     font-size: 20px;
 }
 
+/* Label styling */
+.toggle-card label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #444;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: none;
+    cursor: default;
+    overflow: visible;
+}
+
 /* Toggle switch */
 .switch {
     position: relative;
     display: inline-block;
     width: 50px; /* Larger width for better usability */
     height: 25px; /* Larger height for better usability */
+    pointer-events: auto !important;
 }
 
 .switch input {
@@ -122,11 +145,10 @@ input:checked + .slider:before {
 
 /* Footer styling */
 .footer {
-    color: rgba(0, 0, 0, 0.6); /* Slightly transparent text */
-    font-size: 14px;
+    padding: 20px;
     text-align: center;
-    position: fixed;
-    bottom: 0;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
 }
 
 .footer a {
@@ -162,7 +184,10 @@ input:checked + .slider:before {
     padding: 20px; /* Space inside the card */
     margin: 15px 0; /* Space between cards */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, margin 0.5s ease-in-out;
+    -webkit-transition: all 0.5s ease-in;
+    -moz-transition: all 0.5s ease-in;
+    -o-transition: all 0.5s ease-in;
+    transition: all 0.5s ease-in;
     overflow: hidden;
 }
 
@@ -172,24 +197,15 @@ h2.collapsed {
 
 /* Default collapsed state */
 .toggle-card.collapsed {
-    max-height: 60px; /* Height for just the toggle */
-    opacity: 0.9;
+    max-height: 60px;
+    opacity: 1;
 }
 
 /* Expanded state */
 .toggle-card.expanded {
-    max-height: 500px; /* Large enough to accommodate content */
+    /* max-height: 100%; */
     opacity: 1;
-}
-
-/* Label styling */
-.toggle-card label {
-    font-size: 16px;
-    font-weight: bold;
-    color: #444;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    overflow: visible;
 }
 
 /* Champion list section */
@@ -202,4 +218,72 @@ h2.collapsed {
 .toggle-card.collapsed .list-section {
     opacity: 0; /* Make content invisible */
     pointer-events: none; /* Prevent interactions while collapsed */
+}
+
+.list-section {
+    display: flex;
+    /* direction column wise */
+    flex-direction: column;
+    align-items: center;
+    transition: opacity 0.4s ease-in-out; /* smooth fade-in */
+}
+
+.list-section h2 {
+    position: relative;
+}
+
+#lock_in_search_container {
+    position: relative; /* anchor for the dropdown */
+    width: 200px;
+    padding: 0;
+    margin: 0;
+}
+
+#lock_in_search {
+    width: 100%;
+    padding: 8px;
+    margin: 0;
+}
+
+/* Dropdown styling */
+.dropdown-list {
+    position: absolute;
+    top: 100%; /* directly below the input */
+    left: 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    z-index: 100; /* higher value to stay above other elements */
+    width: 200px; /* same width as input */
+    list-style-type: none;
+    padding: 8px;
+    margin-top: 4px;
+    display: none; /* hidden by default */
+    max-height: 150px;
+    overflow-y: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* subtle pop effect */
+}
+
+.dropdown-list li {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.dropdown-list li:hover {
+    background-color: #f0f0f0;
+}
+
+#lock_in_list {
+    position: relative;
+    padding: 8px;
+}
+
+#lock_in_list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    /* Add some space inbetween */
+    gap: 16px;
+    padding: 4px;
 }

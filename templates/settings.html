@@ -5,141 +5,86 @@
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/ornn.ico') }}">
 
     <title>Settings for Ornn</title>
-    <script>
-        // Send updated setting to the backend
-        async function updateSetting(setting, value) {
-            const response = await fetch('/update', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ setting, value }),
-            });
-            const result = await response.json();
 
-            // Debug purposes
-            console.log(result.message);
-        }
+    <!-- Import the javascript file in static -->
+    <script src="{{ url_for('static', filename='scripts/settings.js') }}"></script>
 
-        // Handle checkbox toggle
-        function toggleFeature(feature) {
-            const checkbox = document.getElementById(feature);
-            const isChecked = checkbox.checked;
-
-            // Update the backend with the new state
-            updateSetting(feature, isChecked);
-
-            // Find the corresponding card container
-            const card = document.getElementById(`${feature}_card`);
-
-            // Find the h2 element under the card
-            const header = card.querySelector('h2');
-
-            if (isChecked) {
-                // Expand the card with animation
-                card.classList.add('expanded');
-                card.classList.remove('collapsed');
-
-            } else {
-                // Collapse the card with animation
-                card.classList.add('collapsed');
-                card.classList.remove('expanded');
-            }
-        }
-
-        // Handle adding champions to a list
-        function addChampion(listId, inputId) {
-            const inputBox = document.getElementById(inputId);
-            const championName = inputBox.value.trim();
-            if (championName) {
-                const list = document.getElementById(listId);
-                const listItem = document.createElement('li');
-                listItem.textContent = championName;
-
-                // Add delete button to remove champion from list
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Remove';
-                deleteButton.onclick = function () {
-                    list.removeChild(listItem);
-                    updateChampionList(listId);
-                };
-
-                listItem.appendChild(deleteButton);
-                list.appendChild(listItem);
-                inputBox.value = '';
-
-                // Update the backend with the new list
-                updateChampionList(listId);
-            }
-        }
-
-        // Update champion list on the backend
-        async function updateChampionList(listId) {
-            const list = document.getElementById(listId);
-            const champions = Array.from(list.children).map((item) => item.firstChild.textContent);
-            const setting = listId === 'ban_list' ? 'auto_ban_list_champions' : 'auto_lock_in_champions';
-
-            await updateSetting(setting, champions);
-        }
-    </script>
 </head>
 <body>
-    <div class="glass-pane">
-        <h1>Settings for Ornn</h1>
+    <div class="page-wrapper">
+        <div class="glass-pane">
+            <h1>Settings for Ornn</h1>
 
-        <!-- Picture of Ornn -->
-        <img class="settings-image" src="{{ url_for('static', filename='images/ornn.jpg') }}" alt="Ornn" class="ornn-image">
+            <!-- Picture of Ornn -->
+            <img class="settings-image" src="{{ url_for('static', filename='images/ornn.jpg') }}" alt="Ornn" class="ornn-image">
 
-        <!-- Auto Accept Toggle Card -->
-        <div id="auto_accept_enabled_card" class="toggle-card collapsed">
-            <label for="auto_accept_enabled">Enable Auto Accept
-                <label class="switch">
-                    <input type="checkbox" id="auto_accept_enabled" onclick="toggleFeature('auto_accept_enabled')" {{ 'checked' if settings['auto_accept_enabled'] else '' }}>
-                    <span class="slider"></span>
+            <!-- Auto Accept Toggle Card -->
+            <div id="auto_accept_enabled_card" class="toggle-card collapsed">
+                <label for="auto_accept_enabled">Enable Auto Accept
+                    <label class="switch">
+                        <input type="checkbox" id="auto_accept_enabled" onclick="toggleFeature('auto_accept_enabled')" {{ 'checked' if settings['auto_accept_enabled'] else '' }}>
+                        <span class="slider"></span>
+                    </label>
                 </label>
-            </label>
-        </div>
+            </div>
 
-        <!-- Auto Lock-In Toggle Card -->
-        <div id="auto_lock_in_enabled_card" class="toggle-card {{ 'expanded' if settings['auto_lock_in_enabled'] else 'collapsed' }}">
-            <label for="auto_lock_in_enabled">Enable Auto Lock-In
-                <label class="switch">
-                    <input type="checkbox" id="auto_lock_in_enabled" onclick="toggleFeature('auto_lock_in_enabled')" {{ 'checked' if settings['auto_lock_in_enabled'] else '' }}>
-                    <span class="slider"></span>
+            <!-- Ranked Mode Toggle Card -->
+            <div id="ranked_mode_enabled_card" class="toggle-card {{ 'expanded' if settings['ranked_mode_enabled'] else 'collapsed' }}">
+                <label for="ranked_mode_enabled">Enable Ranked Mode (Only owned champions)
+                    <label class="switch">
+                        <input type="checkbox" id="ranked_mode_enabled" onclick="toggleFeature('ranked_mode_enabled')" {{ 'checked' if settings['ranked_mode_enabled'] else '' }}>
+                        <span class="slider"></span>
+                    </label>
                 </label>
-            </label>
-            <div class="list-section">
+            </div>
+
+            <!-- Auto Lock-In Toggle Card -->
+            <div data-expandable="true" id="auto_lock_in_enabled_card" class="toggle-card {{ 'expanded' if settings['auto_lock_in_enabled'] else 'collapsed' }}">
+                <label for="auto_lock_in_enabled">Enable Auto Lock-In
+                    <label class="switch">
+                        <input type="checkbox" id="auto_lock_in_enabled" onclick="toggleFeature('auto_lock_in_enabled')" {{ 'checked' if settings['auto_lock_in_enabled'] else '' }}>
+                        <span class="slider"></span>
+                    </label>
+                </label>
+                <div class="list-section">
                 <h2>Auto Lock-In Champions</h2>
-                <input type="text" id="lock_in_search" placeholder="Add a champion..." />
-                <button onclick="addChampion('lock_in_list', 'lock_in_search')">Add</button>
+                    <div id="lock_in_search_container">
+                        <input type="text" id="lock_in_search" placeholder="Search champions..." oninput="searchChampions('lock_in_search', 'lock_in_dropdown')" onfocus="searchChampions('lock_in_search', 'lock_in_dropdown')"/>
+                        <ul id="lock_in_dropdown" class="dropdown-list"></ul>
+                    </div>
+
                 <ul id="lock_in_list">
                     {% for champion in auto_lock_in_champions %}
-                    <li>{{ champion }} <button onclick="this.parentNode.remove(); updateChampionList('lock_in_list')">Remove</button></li>
+                        <li>{{ champion }} <button onclick="this.parentNode.remove(); updateChampionList('lock_in_list')">Remove</button></li>
                     {% endfor %}
                 </ul>
             </div>
-        </div>
 
-        <!-- Auto Ban Toggle Card -->
-        <div id="auto_ban_enabled_card" class="toggle-card {{ 'expanded' if settings['auto_ban_enabled'] else 'collapsed' }}">
-            <label for="auto_ban_enabled">Enable Auto Ban
-                <label class="switch">
-                    <input type="checkbox" id="auto_ban_enabled" onclick="toggleFeature('auto_ban_enabled')" {{ 'checked' if settings['auto_ban_enabled'] else '' }}>
-                    <span class="slider"></span>
+            </div>
+
+            <!-- Auto Ban Toggle Card -->
+            <div data-expandable="true" id="auto_ban_enabled_card" class="toggle-card {{ 'expanded' if settings['auto_ban_enabled'] else 'collapsed' }}">
+                <label for="auto_ban_enabled">Enable Auto Ban
+                    <label class="switch">
+                        <input type="checkbox" id="auto_ban_enabled" onclick="toggleFeature('auto_ban_enabled')" {{ 'checked' if settings['auto_ban_enabled'] else '' }}>
+                        <span class="slider"></span>
+                    </label>
                 </label>
-            </label>
-            <div class="list-section">
-                <h2>Auto Ban Champions</h2>
-                <input type="text" id="ban_search" placeholder="Add a champion..." />
-                <button onclick="addChampion('ban_list', 'ban_search')">Add</button>
-                <ul id="ban_list">
-                    {% for champion in auto_ban_list_champions %}
-                    <li>{{ champion }} <button onclick="this.parentNode.remove(); updateChampionList('ban_list')">Remove</button></li>
-                    {% endfor %}
-                </ul>
+                <div class="list-section">
+                    <h2>Auto Ban Champions</h2>
+                    <input type="text" id="ban_search" placeholder="Add a champion..." />
+                    <button onclick="addChampion('ban_list', 'ban_search')">Add</button>
+                    <ul id="ban_list">
+                        {% for champion in auto_ban_list_champions %}
+                        <li>{{ champion }} <button onclick="this.parentNode.remove(); updateChampionList('ban_list')">Remove</button></li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
-<footer class="footer">
-    Made by Lei-Tin
-</footer>
+    <footer class="footer">
+        Made by <a href="https://github.com/Lei-Tin">Lei-Tin</a>
+    </footer>
 </body>
 </html>

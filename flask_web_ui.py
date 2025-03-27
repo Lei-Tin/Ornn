@@ -20,6 +20,7 @@ settings = {
     "auto_accept_enabled": True,
     "auto_lock_in_enabled": False,
     "auto_ban_enabled": False,
+    'ranked_mode_enabled': True,
 }
 
 # Auto lock-in list of champions
@@ -28,6 +29,9 @@ auto_lock_in_champions = []
 # Auto ban list of champions
 auto_ban_list_champions = []
 
+# Contains a dict for each champion
+playable_champions = []
+
 @app.route('/')
 def serve_settings():
     # Serve the settings page HTML
@@ -35,6 +39,17 @@ def serve_settings():
                            settings=settings,
                            auto_ban_list_champions=auto_ban_list_champions,
                            auto_lock_in_champions=auto_lock_in_champions)
+
+@app.route('/champions', methods=['GET'])
+def get_champions():
+    if settings['ranked_mode_enabled']:
+        champions = [champ['name'] for champ in playable_champions if not champ['freeToPlay']]
+    else:
+        champions = [champ['name'] for champ in playable_champions]
+
+    logger.debug(f"Returning champions list: {champions}")
+    return jsonify({"champions": champions})
+
 
 @app.route('/update', methods=['POST'])
 def update_settings():

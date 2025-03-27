@@ -12,7 +12,7 @@ import logging
 from tkinter import Tk, messagebox
 
 from sys_tray import setup_tray
-from flask_web_ui import start_flask_server, settings
+from flask_web_ui import start_flask_server, settings, playable_champions
 
 from config import *
 from utils import check_running_instance, cleanup_lock_file
@@ -43,6 +43,17 @@ def show_dialog():
 @connector.ready
 async def connect(connection):
     logger.info('LCU Client Attached')
+
+    # Obtain the list of playable champions
+    champs_result = await connection.request("get", "/lol-champions/v1/owned-champions-minimal")
+    champs_json = await champs_result.json()
+
+    logger.info(f'Adding {len(champs_json)} champions to the list of playable champions.')
+
+    for champ_json in champs_json:
+        playable_champions.append(
+            champ_json
+        )
 
 @connector.ws.register('/lol-matchmaking/v1/search', event_types=('CREATE',))
 async def matchmaking_started(connection, event):
